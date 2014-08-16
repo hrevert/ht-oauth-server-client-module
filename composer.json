@@ -1,0 +1,26 @@
+{
+    "name": "hrevert/ht-oauth-server-client-module",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Hrevert Technologies",
+            "email": "info@hrevert.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.4",
+        "hrevert/ht-oauth-client-module": "dev-master",
+        "hrevert/ht-league-oauth-client-module": "dev-master"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "4.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "HtOauth\Server\ClientModule\\": "src/"
+        },
+        "classmap": [
+            "./Module.php"
+        ]
+    }
+}
