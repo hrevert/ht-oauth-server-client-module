@@ -17,7 +17,7 @@
     },
     "autoload": {
         "psr-4": {
-            "HtOauth\Server\ClientModule\\": "src/"
+            "HtOauth\\Server\\ClientModule\\": "src/"
         },
         "classmap": [
             "./Module.php"
