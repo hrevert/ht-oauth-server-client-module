@@ -37,6 +37,10 @@ class Module implements
      */
     public function getServiceConfig()
     {
-        return [];
+        return [
+            'factories' => [
+                'HtOauth\Server\ClientModule\Options\ModuleOptions' => 'HtOauth\Server\ClientModule\Factory\ModuleOptionsFactory',  
+            ],
+        ];
     }
 }

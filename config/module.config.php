@@ -7,5 +7,6 @@ return [
                 'oauth2_client' => 'HtOauth\Server\ClientModule\Factory\Oauth2ClientGrantFactory',
             ]
         ]
-    ]
+    ],
+    'ht_oauth_service_client' => [],
 ];

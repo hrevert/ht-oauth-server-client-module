@@ -18,6 +18,7 @@ interface Oauth2ClientGrantFactory implements FactoryInterface
             $serviceLocator->get('Hrevert\OauthClient\Manager\UserProviderManager'),
             $serviceLocator->get('HtLeagueOauthClientModule\Oauth2ClientManager'),
             $serviceLocator->get('ZfrOAuth2\Server\AuthorizationServer'),
+            $serviceLocator->get('HtOauth\Server\ClientModule\Options\ModuleOptions'),
         );
     }
 }

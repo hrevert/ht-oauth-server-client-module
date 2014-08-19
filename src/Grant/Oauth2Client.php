@@ -14,6 +14,7 @@ use ZfrOAuth2\Server\Exception\OAuth2Exception;
 use ZfrOAuth2\Server\Grant\AbstractGrant;
 use ZfrOAuth2\Server\Grant\RefreshTokenGrant;
 use ZfrOAuth2\Server\Service\TokenService;
+use HtOauth\Server\ClientModule\Options\ModuleOptions;
 
 class Oauth2Client extends AbstractGrant
 {
@@ -38,6 +39,11 @@ class Oauth2Client extends AbstractGrant
     protected $authorizationServer;
 
     /**
+     * @var ModuleOptions
+     */
+    protected $options;
+
+    /**
      * Constructor
      *
      * @param TokenService $accessTokenService
@@ -53,7 +59,8 @@ class Oauth2Client extends AbstractGrant
         ProviderManagerInterface $providerManager,
         UserProviderManagerInterface $userProviderManager,
         ServiceLocatorInterface $providerClients,
-        AuthorizationServer $authorizationServer
+        AuthorizationServer $authorizationServer,
+        ModuleOptions $options
     )
     {
         $this->accessTokenService   = $accessTokenService;
@@ -62,6 +69,7 @@ class Oauth2Client extends AbstractGrant
         $this->userProviderManager  = $userProviderManager;
         $this->providerClients      = $providerClients;
         $this->authorizationServer  = $authorizationServer;
+        $this->options              = $options;
     }
 
     /**
@@ -111,7 +119,12 @@ class Oauth2Client extends AbstractGrant
 
         if (!$userProvider) {
             // access token is valid but the user does not exists
-            throw OAuth2Exception::accessDenied('You are not authorized to log in to the system.');
+            $createUserCallable = $this->options->getCreateUserCallable();
+
+            /** @var \Hrevert\OauthClient\Model\UserProviderInterface */
+            $userProvider = $createUserCallable($userDetails);
+            $userProvider->setProviderUid($userDetails->uid);
+            $userProvider->setProvider($provider);
         }
 
         // Everything is okey, we can start tokens generation!
