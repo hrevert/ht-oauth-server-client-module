@@ -2,7 +2,6 @@
 namespace HtOauth\Server\ClientModule\Grant;
 
 use Hrevert\OauthClient\Manager\ProviderManagerInterface;
-use League\OAuth2\Client\Token\AccessToken as ProviderAccessToken;
 use Zend\Http\Request as HttpRequest;
 use Zend\ServiceLocator\ServiceLocatorInterface;
 use ZfrOAuth2\Server\AuthorizationServer;
@@ -15,6 +14,7 @@ use ZfrOAuth2\Server\Grant\AbstractGrant;
 use ZfrOAuth2\Server\Grant\RefreshTokenGrant;
 use ZfrOAuth2\Server\Service\TokenService;
 use HtOauth\Server\ClientModule\Options\ModuleOptions;
+use League\OAuth2\Client\Exception\IDPException;
 
 class Oauth2Client extends AbstractGrant
 {
@@ -85,9 +85,9 @@ class Oauth2Client extends AbstractGrant
      */    
     public function createTokenResponse(HttpRequest $request, Client $client = null, TokenOwnerInterface $owner = null)
     {
-        $providerName        = $request->getPost('provider');
-        $providerAccessToken = $request->getPost('provider_access_token');
-        $scope               = $request->getPost('scope');
+        $providerName               = $request->getPost('provider');
+        $providerAuthorizationCode  = $request->getPost('provider_authorization_code');
+        $scope                      = $request->getPost('scope');
         
         if ($providerName === null) {
             throw OAuth2Exception::invalidRequest('Provider name is missing.');
@@ -97,8 +97,6 @@ class Oauth2Client extends AbstractGrant
             throw OAuth2Exception::invalidRequest('Provider access token is missing.');
         }
 
-        $providerAccessToken = new ProviderAccessToken(['access_token' => $providerAccessToken]);
-
         $provider = $this->providerManager->findByName($providerName);
         if (!$provider) {
             throw OAuth2Exception::invalidRequest(sprintf('Provider %s is not supported.', $providerName));
@@ -106,6 +104,14 @@ class Oauth2Client extends AbstractGrant
 
         /** @var \League\OAuth2\Client\Provider\ProviderInterface */
         $providerClient = $this->providerClients->get($providerName);
+
+        // Try to get an access token (using the authorization code grant)
+        try {
+            /** @var \League\OAuth2\Client\Token\AccessToken  */
+            $providerAccessToken = $providerClient->getAccessToken('authorization_code', ['code' => $providerAuthorizationCode]);            
+        } catch (IDPException $e) {
+            // @todo what to do here???
+        }
 
         try{
             $userDetails = $providerClient->getUserDetails($providerAccessToken);    
