@@ -16,9 +16,13 @@ use ZfrOAuth2\Server\Grant\RefreshTokenGrant;
 use ZfrOAuth2\Server\Service\TokenService;
 use HtOauth\Server\ClientModule\Options\ModuleOptions;
 use League\OAuth2\Client\Exception\IDPException;
+use ZfrOAuth2\Server\Grant\AuthorizationServerAwareInterface;
+use ZfrOAuth2\Server\Grant\AuthorizationServerAwareTrait;
 
 class Oauth2Client extends AbstractGrant
 {
+    use AuthorizationServerAwareTrait;
+
     /**
      * @var ProviderManagerInterface
      */
@@ -33,11 +37,6 @@ class Oauth2Client extends AbstractGrant
      * @var ServiceLocatorInterface
      */
     protected $providerClients;
-
-    /**
-     * @var AuthorizationServer
-     */
-    protected $authorizationServer;
 
     /**
      * @var ModuleOptions
@@ -60,7 +59,6 @@ class Oauth2Client extends AbstractGrant
         ProviderManagerInterface $providerManager,
         UserProviderManagerInterface $userProviderManager,
         ServiceLocatorInterface $providerClients,
-        AuthorizationServer $authorizationServer,
         ModuleOptions $options
     )
     {
@@ -69,7 +67,6 @@ class Oauth2Client extends AbstractGrant
         $this->providerManager      = $providerManager;
         $this->userProviderManager  = $userProviderManager;
         $this->providerClients      = $providerClients;
-        $this->authorizationServer  = $authorizationServer;
         $this->options              = $options;
     }
 

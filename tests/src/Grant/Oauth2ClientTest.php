@@ -42,9 +42,10 @@ class Oauth2ClientTest extends \PHPUnit_Framework_TestCase
             $providerManager,
             $userProviderManager,
             $providerClients,
-            $authorizationServer,
             $options
         );
+
+        $grant->setAuthorizationServer($authorizationServer);
         
         return [
             $grant,
