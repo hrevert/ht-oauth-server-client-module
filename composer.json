@@ -1,6 +1,8 @@
 {
     "name": "hrevert/ht-oauth-server-client-module",
+    "description": "A Zend Framework 2 module which provides custom grant for zfr-oauth2-server to authenticate users via third party applications like facebook, google etc",
     "type": "library",
+    "license" : "MIT",
     "authors": [
         {
             "name": "Hrevert Technologies",
