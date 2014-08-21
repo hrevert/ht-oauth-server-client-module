@@ -19,7 +19,7 @@ use League\OAuth2\Client\Exception\IDPException;
 use ZfrOAuth2\Server\Grant\AuthorizationServerAwareInterface;
 use ZfrOAuth2\Server\Grant\AuthorizationServerAwareTrait;
 
-class Oauth2Client extends AbstractGrant
+class Oauth2Client extends AbstractGrant implements AuthorizationServerAwareInterface
 {    
     const GRANT_TYPE          = 'oauth2_client';
     const GRANT_RESPONSE_TYPE = null;
@@ -54,7 +54,6 @@ class Oauth2Client extends AbstractGrant
      * @param ProviderManagerInterface $providerManager
      * @param UserProviderManagerInterface $userProviderManager
      * @param ServiceLocatorInterface $providerClients
-     * @param AuthorizationServer $authorizationServer
      */
     public function __construct(
         TokenService $accessTokenService,
