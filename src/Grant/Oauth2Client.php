@@ -19,6 +19,9 @@ use League\OAuth2\Client\Exception\IDPException;
 
 class Oauth2Client extends AbstractGrant
 {
+    const GRANT_TYPE          = 'oauth2_client';
+    const GRANT_RESPONSE_TYPE = null;
+
     /**
      * @var ProviderManagerInterface
      */
