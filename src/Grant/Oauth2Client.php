@@ -2,8 +2,9 @@
 namespace HtOauth\Server\ClientModule\Grant;
 
 use Hrevert\OauthClient\Manager\ProviderManagerInterface;
+use Hrevert\OauthClient\Manager\UserProviderManagerInterface;
 use Zend\Http\Request as HttpRequest;
-use Zend\ServiceLocator\ServiceLocatorInterface;
+use Zend\ServiceManager\ServiceLocatorInterface;
 use ZfrOAuth2\Server\AuthorizationServer;
 use ZfrOAuth2\Server\Entity\AccessToken;
 use ZfrOAuth2\Server\Entity\Client;
@@ -93,13 +94,13 @@ class Oauth2Client extends AbstractGrant
             throw OAuth2Exception::invalidRequest('Provider name is missing.');
         }
 
-        if ($providerAccessToken === null) {
-            throw OAuth2Exception::invalidRequest('Provider access token is missing.');
+        if ($providerAuthorizationCode === null) {
+            throw OAuth2Exception::invalidRequest('Provider access token is missing');
         }
 
         $provider = $this->providerManager->findByName($providerName);
         if (!$provider) {
-            throw OAuth2Exception::invalidRequest(sprintf('Provider %s is not supported.', $providerName));
+            throw OAuth2Exception::invalidRequest(sprintf('Provider %s is not supported', $providerName));
         }
 
         /** @var \League\OAuth2\Client\Provider\ProviderInterface */
@@ -110,17 +111,14 @@ class Oauth2Client extends AbstractGrant
             /** @var \League\OAuth2\Client\Token\AccessToken  */
             $providerAccessToken = $providerClient->getAccessToken('authorization_code', ['code' => $providerAuthorizationCode]);            
         } catch (IDPException $e) {
-            // @todo what to do here???
+            // @todo decide what is the best thing to do here???
+            throw OAuth2Exception::invalidRequest(sprintf('Provider authorization code is invalid'));
         }
 
-        try{
-            $userDetails = $providerClient->getUserDetails($providerAccessToken);    
-        } catch(\GuzzleHttp\Exception\ClientException $e) {
-            throw OAuth2Exception::invalidRequest(sprintf('Invalid Access Token!'));
-        }
+        /** @var \League\OAuth2\Client\Entity\User */
+        $userDetails = $providerClient->getUserDetails($providerAccessToken);
         
         // access token is valid
-
         $userProvider = $this->userProviderManager->findByProviderUid($userDetails->uid, $provider);
 
         if (!$userProvider) {

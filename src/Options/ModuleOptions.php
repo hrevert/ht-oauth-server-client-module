@@ -21,7 +21,7 @@ class ModuleOptions extends AbstractOptions
         $this->createUserCallable = function () {
             // By default if a new user tries to sign in, he is not allowed to sign in
             throw OAuth2Exception::accessDenied('You are not authorized to log in to the system.');
-        }
+        };
 
         $this->setFromArray($options);
     }
