@@ -10,8 +10,8 @@
     "minimum-stability" :"dev",
     "require": {
         "php": ">=5.4",
-        "hrevert/ht-oauth-client-module": "dev-master",
-        "hrevert/ht-league-oauth-client-module": "dev-master",
+        "hrevert/ht-oauth-client-module": "0.0.*",
+        "hrevert/ht-league-oauth-client-module": "0.0.*",
         "zendframework/zend-stdlib": "~2.2",
         "zfr/zfr-oauth2-server-module": "0.5.*"
     },
