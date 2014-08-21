@@ -20,7 +20,10 @@ use ZfrOAuth2\Server\Grant\AuthorizationServerAwareInterface;
 use ZfrOAuth2\Server\Grant\AuthorizationServerAwareTrait;
 
 class Oauth2Client extends AbstractGrant
-{
+{    
+    const GRANT_TYPE          = 'oauth2_client';
+    const GRANT_RESPONSE_TYPE = null;
+
     use AuthorizationServerAwareTrait;
 
     /**
