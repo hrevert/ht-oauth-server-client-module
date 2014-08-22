@@ -59,16 +59,13 @@ return [
     'ht_oauth_service_client' => [
         'create_user_callable' => function(\League\OAuth2\Client\Entity\User $userDetails) {
             $user = ......;
-            
             $userProvider = new \Hrevert\OauthClient\Entity\UserProvider();
             $userProvider->setUser($user);
-            
             return $userProvider; 
 
             // or just
 
             $user = ......;
-
             return $user;
         }
     ]
