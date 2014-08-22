@@ -116,7 +116,7 @@ class Oauth2Client extends AbstractGrant implements AuthorizationServerAwareInte
             throw OAuth2Exception::invalidRequest(sprintf('Provider authorization code is invalid'));
         }
 
-        /** @var \League\OAuth2\Client\Entity\User */
+        /** @var \League\OAuth2\Client\Provider\User */
         $userDetails = $providerClient->getUserDetails($providerAccessToken);
         
         // access token is valid
