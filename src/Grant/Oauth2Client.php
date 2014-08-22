@@ -18,6 +18,8 @@ use HtOauth\Server\ClientModule\Options\ModuleOptions;
 use League\OAuth2\Client\Exception\IDPException;
 use ZfrOAuth2\Server\Grant\AuthorizationServerAwareInterface;
 use ZfrOAuth2\Server\Grant\AuthorizationServerAwareTrait;
+use Hrevert\OauthClient\Entity\UserProvider;
+use Hrevert\OauthClient\Model\UserInterface;
 
 class Oauth2Client extends AbstractGrant implements AuthorizationServerAwareInterface
 {    
@@ -124,8 +126,16 @@ class Oauth2Client extends AbstractGrant implements AuthorizationServerAwareInte
             // access token is valid but the user does not exists
             $createUserCallable = $this->options->getCreateUserCallable();
 
-            /** @var \Hrevert\OauthClient\Model\UserProviderInterface */
+            // by default, we expect the callable to return instance of "Hrevert\OauthClient\Model\UserProviderInterface"
+            // because the developer may have extended the default implementation
+            // Alternatively the callable may return user entity directly
             $userProvider = $createUserCallable($userDetails);
+            if ($userProvider instanceof UserInterface) {
+                $user = $userProvider;
+                $userProvider = new UserProvider;
+                $userProvider->setUser($user);
+            }
+
             $userProvider->setProviderUid($userDetails->uid);
             $userProvider->setProvider($provider);
         }

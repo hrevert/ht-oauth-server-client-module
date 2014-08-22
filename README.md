@@ -63,7 +63,13 @@ return [
             $userProvider = new \Hrevert\OauthClient\Entity\UserProvider();
             $userProvider->setUser($user);
             
-            return $userProvider;
+            return $userProvider; 
+
+            // or just
+
+            $user = ......;
+
+            return $user;
         }
     ]
 ];
