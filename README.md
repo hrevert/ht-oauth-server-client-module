@@ -6,6 +6,9 @@ A Zend Framework 2 module which provides custom grant for [zfr-oauth2-server](ht
 [![Latest Stable Version](https://poser.pugx.org/hrevert/ht-oauth-server-client-module/version.svg)](https://packagist.org/packages/hrevert/ht-oauth-server-client-module) 
 [![Latest Unstable Version](https://poser.pugx.org/hrevert/ht-oauth-server-client-module/v/unstable.svg)](//packagist.org/packages/hrevert/ht-oauth-server-client-module) [![Total Downloads](https://poser.pugx.org/hrevert/ht-oauth-server-client-module/downloads.svg)](https://packagist.org/packages/hrevert/ht-oauth-server-client-module)
 
+### What's with the name?
+The module provides a grant for a oauth2 server and it is also a client for oauth2 servers of facebook, google etc. So, it is named as server as well as client.
+
 ## Installation
 * Add `"hrevert/ht-oauth-server-client-module": "dev-master"` to composer.json and run `php composer.phar update`.
 * Enabled the following modules in `config/application.config.php`.
