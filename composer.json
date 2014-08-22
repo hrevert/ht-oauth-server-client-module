@@ -9,7 +9,6 @@
             "email": "info@hrevert.com"
         }
     ],
-    "minimum-stability" :"dev",
     "require": {
         "php": ">=5.4",
         "hrevert/ht-oauth-client-module": "0.0.*",
