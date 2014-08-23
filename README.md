@@ -23,7 +23,7 @@ The module provides a grant for a oauth2 server and it is also a client for oaut
 
 ## Configuring the module
 #### Setting the User class
-User class implements the ZfrOAuth2\Server\Entity\TokenOwnerInterface interface `Hrevert\OauthClient\Model\UserInterface`. Then, you need to modify the Doctrine mapping to associate this interface with your own user class.
+User class must implement `Hrevert\OauthClient\Model\UserInterface`. Then, you need to modify the Doctrine mapping to associate this interface with your own user class.
 
 ```php
 return [
