@@ -295,7 +295,7 @@ class Oauth2ClientTest extends \PHPUnit_Framework_TestCase
         $refreshToken->setToken('azerty_refresh');
         $refreshToken->setScopes('read');
         $validDate    = new DateTime();
-        $validDate->add(new DateInterval('P1D'));
+        $validDate->add(DateInterval::createFromDateString('3600 seconds'));
 
         $refreshToken->setExpiresAt($validDate);
 
