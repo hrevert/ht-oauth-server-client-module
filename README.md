@@ -38,7 +38,7 @@ return [
 ```
 
 #### Provider configuration
-You need to define the credentials like client id, client secret and other configuration. Read [this](https://github.com/hrevert/HtLeagueOauthClientModule/tree/0.0.1) for these configuration.
+You need to define the credentials like client id, client secret and other configuration. Read [this](https://github.com/hrevert/HtLeagueOauthClientModule/tree/0.1.0) for these configuration.
 
 #### Adding grant types
 ```php
