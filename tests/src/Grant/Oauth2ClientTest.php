@@ -232,7 +232,8 @@ class Oauth2ClientTest extends \PHPUnit_Framework_TestCase
 
         if (!$userProvider) {
             $userProvider = $this->getMock('Hrevert\OauthClient\Model\UserProviderInterface');
-            $createUserCallable = function() use ($userProvider) {
+            $createUserCallable = function($oauth2User) use ($userProvider) {
+                $this->assertInstanceOf('HtLeagueOauthClientModule\Model\Oauth2User', $oauth2User);
                 return $userProvider;
             };
             $options->expects($this->once())
