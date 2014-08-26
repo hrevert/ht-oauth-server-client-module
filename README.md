@@ -64,7 +64,7 @@ To automatically create a new user, you need to specify a callable for creating 
 
 return [
     'ht_oauth_service_client' => [
-        'create_user_callable' => function(\League\OAuth2\Client\Provider\User $userDetails) {
+        'create_user_callable' => function(\HtLeagueOauthClientModule\Model\UserInterface $userDetails) {
             $user = ......;
             
             $userProvider = new \Hrevert\OauthClient\Entity\UserProvider();
