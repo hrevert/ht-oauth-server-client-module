@@ -21,6 +21,7 @@ use ZfrOAuth2\Server\Grant\AuthorizationServerAwareTrait;
 use Hrevert\OauthClient\Entity\UserProvider;
 use Hrevert\OauthClient\Model\UserInterface;
 use Doctrine\Common\Persistence\ObjectManager;
+use HtLeagueOauthClientModule\Model\Oauth2User;
 
 class Oauth2Client extends AbstractGrant implements AuthorizationServerAwareInterface
 {    
@@ -125,7 +126,7 @@ class Oauth2Client extends AbstractGrant implements AuthorizationServerAwareInte
             throw OAuth2Exception::invalidRequest(sprintf('Provider authorization code is invalid'));
         }
 
-        /** @var \League\OAuth2\Client\Entity\User */
+        /** @var \League\OAuth2\Client\Provider\User */
         $userDetails = $providerClient->getUserDetails($providerAccessToken);
         
         // access token is valid
@@ -138,7 +139,7 @@ class Oauth2Client extends AbstractGrant implements AuthorizationServerAwareInte
             // by default, we expect the callable to return instance of "Hrevert\OauthClient\Model\UserProviderInterface"
             // because the developer may have extended the default implementation
             // Alternatively the callable may return user entity directly
-            $userProvider = $createUserCallable($userDetails);
+            $userProvider = $createUserCallable(new Oauth2User($userDetails));
             if ($userProvider instanceof UserInterface) {
                 $user = $userProvider;
                 $userProvider = new UserProvider;
