@@ -20,6 +20,7 @@ use ZfrOAuth2\Server\Grant\AuthorizationServerAwareInterface;
 use ZfrOAuth2\Server\Grant\AuthorizationServerAwareTrait;
 use Hrevert\OauthClient\Entity\UserProvider;
 use Hrevert\OauthClient\Model\UserInterface;
+use Doctrine\Common\Persistence\ObjectManager;
 
 class Oauth2Client extends AbstractGrant implements AuthorizationServerAwareInterface
 {    
@@ -49,6 +50,11 @@ class Oauth2Client extends AbstractGrant implements AuthorizationServerAwareInte
     protected $options;
 
     /**
+     * @var ObjectManager
+     */
+    protected $objectManager;
+
+    /**
      * Constructor
      *
      * @param TokenService $accessTokenService
@@ -56,6 +62,7 @@ class Oauth2Client extends AbstractGrant implements AuthorizationServerAwareInte
      * @param ProviderManagerInterface $providerManager
      * @param UserProviderManagerInterface $userProviderManager
      * @param ServiceLocatorInterface $providerClients
+     * @param ObjectManager $objectManager
      */
     public function __construct(
         TokenService $accessTokenService,
@@ -63,7 +70,8 @@ class Oauth2Client extends AbstractGrant implements AuthorizationServerAwareInte
         ProviderManagerInterface $providerManager,
         UserProviderManagerInterface $userProviderManager,
         ServiceLocatorInterface $providerClients,
-        ModuleOptions $options
+        ModuleOptions $options,
+        ObjectManager $objectManager
     )
     {
         $this->accessTokenService   = $accessTokenService;
@@ -72,6 +80,7 @@ class Oauth2Client extends AbstractGrant implements AuthorizationServerAwareInte
         $this->userProviderManager  = $userProviderManager;
         $this->providerClients      = $providerClients;
         $this->options              = $options;
+        $this->objectManager        = $objectManager;
     }
 
     /**
@@ -96,7 +105,7 @@ class Oauth2Client extends AbstractGrant implements AuthorizationServerAwareInte
         }
 
         if ($providerAuthorizationCode === null) {
-            throw OAuth2Exception::invalidRequest('Provider access token is missing');
+            throw OAuth2Exception::invalidRequest('Provider authorization code is missing');
         }
 
         $provider = $this->providerManager->findByName($providerName);
@@ -138,6 +147,9 @@ class Oauth2Client extends AbstractGrant implements AuthorizationServerAwareInte
 
             $userProvider->setProviderUid($userDetails->uid);
             $userProvider->setProvider($provider);
+
+            $this->objectManager->persist($userProvider);
+            $this->objectManager->flush();
         }
 
         // Everything is okey, we can start tokens generation!

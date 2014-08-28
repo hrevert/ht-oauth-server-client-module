@@ -36,13 +36,16 @@ class Oauth2ClientTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $objectManager = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
+
         $grant = new Oauth2Client(
             $accessTokenService,
             $refreshTokenService,
             $providerManager,
             $userProviderManager,
             $providerClients,
-            $options
+            $options,
+            $objectManager
         );
 
         $grant->setAuthorizationServer($authorizationServer);
@@ -55,7 +58,8 @@ class Oauth2ClientTest extends \PHPUnit_Framework_TestCase
             $userProviderManager,
             $providerClients,
             $authorizationServer,
-            $options
+            $options,
+            $objectManager
         ];      
     }
 
@@ -122,7 +126,8 @@ class Oauth2ClientTest extends \PHPUnit_Framework_TestCase
             $userProviderManager,
             $providerClients,
             $authorizationServer,
-            $options
+            $options,
+            $objectManager
         ) = $this->createOauth2ClientGrant();
 
         $request = $this->getMock('Zend\Http\Request');
@@ -181,7 +186,8 @@ class Oauth2ClientTest extends \PHPUnit_Framework_TestCase
             $userProviderManager,
             $providerClients,
             $authorizationServer,
-            $options
+            $options,
+            $objectManager
         ) = $this->createOauth2ClientGrant();
 
         $request = $this->getMock('Zend\Http\Request');
@@ -246,6 +252,13 @@ class Oauth2ClientTest extends \PHPUnit_Framework_TestCase
             $userProvider->expects($this->once())
                 ->method('setProvider')
                 ->with($provider);
+
+            $objectManager->expects($this->once())
+                ->method('persist')
+                ->with($userProvider);
+
+            $objectManager->expects($this->once())
+                ->method('flush');
         }
 
         $owner = $this->getMock('ZfrOAuth2\Server\Entity\TokenOwnerInterface');
