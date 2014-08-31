@@ -153,7 +153,7 @@ class Oauth2Client extends AbstractGrant implements AuthorizationServerAwareInte
             $this->objectManager->flush();
         }
 
-        // Everything is okey, we can start tokens generation!
+        // Everything is okay, we can start tokens generation!
         $accessToken = new AccessToken();
 
         /** @var TokenOwnerInterface */
