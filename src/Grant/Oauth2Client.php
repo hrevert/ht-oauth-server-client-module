@@ -22,6 +22,8 @@ use Hrevert\OauthClient\Entity\UserProvider;
 use Hrevert\OauthClient\Model\UserInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use HtLeagueOauthClientModule\Model\Oauth2User;
+use HtOauth\Server\ClientModule\Model\TokenOwnerProviderInterface;
+use HtOauth\Server\ClientModule\Exception\DomainException;
 
 class Oauth2Client extends AbstractGrant implements AuthorizationServerAwareInterface
 {    
@@ -156,8 +158,22 @@ class Oauth2Client extends AbstractGrant implements AuthorizationServerAwareInte
         // Everything is okay, we can start tokens generation!
         $accessToken = new AccessToken();
 
-        /** @var TokenOwnerInterface */
-        $owner = $userProvider->getUser();
+        /** @var UserInterface */
+        $user = $userProvider->getUser();
+
+        if ($user instanceof TokenOwnerInterface) {
+            /** @var TokenOwnerInterface */
+            $owner = $user;
+        } else {
+            if (!$user instanceof TokenOwnerProviderInterface) {
+                throw new DomainException(sprintf(
+                    'User entity must implement HtOauth\Server\ClientModule\Model\TokenOwnerProviderInterface' .
+                    ' or ZfrOAuth2\Server\Entity\TokenOwnerInterface'
+                ));
+            }
+            /** @var TokenOwnerInterface */
+            $owner = $user->getTokenOwner();
+        }
 
         $this->populateToken($accessToken, $client, $owner, $scope);
         $accessToken = $this->accessTokenService->createToken($accessToken);
