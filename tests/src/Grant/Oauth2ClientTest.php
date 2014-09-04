@@ -71,14 +71,6 @@ class Oauth2ClientTest extends \PHPUnit_Framework_TestCase
 
         $this->setExpectedException('ZfrOAuth2\Server\Exception\OAuth2Exception');
         $grant->createTokenResponse($request);
-
-        $request->expects($this->once())
-            ->method('getPost')
-            ->with('provider')
-            ->will($this->returnValue('facebook')); var_dump($request->getPost('provider'));exit();
-
-        $this->setExpectedException('ZfrOAuth2\Server\Exception\OAuth2Exception');
-        $grant->createTokenResponse($request);
     }
 
     public function testGetExceptionWhenProviderAuthorizationCodeIsEmpty()
