@@ -84,8 +84,8 @@ return [
 
 ## How It Works
 ### Login with OAuth 2.0
-1. **Client:** Client sends a `POST` request to the server at */oauth/token* with oauth2 authorization code.
-2. **Server:** Then *authorization code* is exchanged for *provider access token*.
+1. **Client:** Client sends a `POST` request to the server at */oauth/token* with oauth2 authorization code or access token.
+2. **Server:** With  *authorization code*, *authorization code* is exchanged for *provider access token*.
 3. **Server:** User information is retrived using the *provider access token* from **Step 2**.
 4. **Server:** Look up the user by the unique *provider id*. If user already exists, grab 
 the existing user, otherwise create a new user account.
