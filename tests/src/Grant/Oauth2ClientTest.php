@@ -7,7 +7,7 @@ use DateInterval;
 use DateTime;
 use ZfrOAuth2\Server\Entity\AccessToken;
 use Hrevert\OauthClient\Model\UserProviderInterface;
-use League\OAuth2\Client\Provider\User as ProviderUser;
+use League\OAuth2\Client\Entity\User as ProviderUser;
 use ZfrOAuth2\Server\Entity\Client;
 use ZfrOAuth2\Server\Entity\RefreshToken;
 use ZfrOAuth2\Server\Grant\RefreshTokenGrant;
@@ -141,7 +141,7 @@ class Oauth2ClientTest extends \PHPUnit_Framework_TestCase
             ->with('facebook')
             ->will($this->returnValue($provider));
 
-        $providerClient = $this->getMock('League\OAuth2\Client\Provider\IdentityProvider');
+        $providerClient = $this->getMock('League\OAuth2\Client\Provider\ProviderInterface');
 
         $providerClients->expects($this->once())
             ->method('get')
@@ -201,7 +201,7 @@ class Oauth2ClientTest extends \PHPUnit_Framework_TestCase
             ->with('facebook')
             ->will($this->returnValue($provider));
 
-        $providerClient = $this->getMock('League\OAuth2\Client\Provider\IdentityProvider');
+        $providerClient = $this->getMock('League\OAuth2\Client\Provider\ProviderInterface');
 
         $providerClients->expects($this->once())
             ->method('get')
