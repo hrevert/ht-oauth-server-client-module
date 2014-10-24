@@ -22,6 +22,7 @@ use Hrevert\OauthClient\Entity\UserProvider;
 use Hrevert\OauthClient\Model\UserInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use HtLeagueOauthClientModule\Model\Oauth2User;
+use League\OAuth2\Client\Token\AccessToken as ProviderAccessToken;
 
 class Oauth2Client extends AbstractGrant implements AuthorizationServerAwareInterface
 {    
@@ -99,14 +100,15 @@ class Oauth2Client extends AbstractGrant implements AuthorizationServerAwareInte
     {
         $providerName               = $request->getPost('provider');
         $providerAuthorizationCode  = $request->getPost('provider_authorization_code');
+        $providerAccessToken        = $request->getPost('provider_access_token');
         $scope                      = $request->getPost('scope');
         
         if ($providerName === null) {
             throw OAuth2Exception::invalidRequest('Provider name is missing.');
         }
 
-        if ($providerAuthorizationCode === null) {
-            throw OAuth2Exception::invalidRequest('Provider authorization code is missing');
+        if ($providerAuthorizationCode === null and $providerAccessToken === null) {
+            throw OAuth2Exception::invalidRequest('One of Provider authorization code and Provider access token is required');
         }
 
         $provider = $this->providerManager->findByName($providerName);
@@ -117,13 +119,17 @@ class Oauth2Client extends AbstractGrant implements AuthorizationServerAwareInte
         /** @var \League\OAuth2\Client\Provider\ProviderInterface */
         $providerClient = $this->providerClients->get($providerName);
 
-        // Try to get an access token (using the authorization code grant)
-        try {
-            /** @var \League\OAuth2\Client\Token\AccessToken  */
-            $providerAccessToken = $providerClient->getAccessToken('authorization_code', ['code' => $providerAuthorizationCode]);            
-        } catch (IDPException $e) {
-            // @todo decide what is the best thing to do here???
-            throw OAuth2Exception::invalidRequest(sprintf('Provider authorization code is invalid'));
+        if ($providerAuthorizationCode) {
+            // Try to get an access token (using the authorization code grant)
+            try {
+                /** @var ProviderAccessToken  $providerAccessToken*/
+                $providerAccessToken = $providerClient->getAccessToken('authorization_code', ['code' => $providerAuthorizationCode]);
+            } catch (IDPException $e) {
+                // @todo decide what is the best thing to do here???
+                throw OAuth2Exception::invalidRequest(sprintf('Provider authorization code is invalid'));
+            }
+        } else {
+            $providerAccessToken = new ProviderAccessToken(['access_token' => $providerAccessToken]);
         }
 
         /** @var \League\OAuth2\Client\Provider\User */

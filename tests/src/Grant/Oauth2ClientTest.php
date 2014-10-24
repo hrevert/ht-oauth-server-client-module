@@ -11,6 +11,7 @@ use League\OAuth2\Client\Entity\User as ProviderUser;
 use ZfrOAuth2\Server\Entity\Client;
 use ZfrOAuth2\Server\Entity\RefreshToken;
 use ZfrOAuth2\Server\Grant\RefreshTokenGrant;
+use League\OAuth2\Client\Token\AccessToken as ProviderAccessToken;
 
 class Oauth2ClientTest extends \PHPUnit_Framework_TestCase
 {
@@ -160,7 +161,8 @@ class Oauth2ClientTest extends \PHPUnit_Framework_TestCase
     public function getCreateTokenData()
     {
         return [
-            [true, null],
+            [true, null, null],
+            [false, $this->getMock('Hrevert\OauthClient\Model\UserProviderInterface'), 'ytdfgadsfasdfasdf'],
             [false, $this->getMock('Hrevert\OauthClient\Model\UserProviderInterface')]
         ];
     }
@@ -168,7 +170,7 @@ class Oauth2ClientTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider getCreateTokenData
      */
-    public function testCanCreateTokenResponse($hasRefreshGrant, UserProviderInterface $userProvider = null)
+    public function testCanCreateTokenResponse($hasRefreshGrant, UserProviderInterface $userProvider = null, $providerAuthorizationCode = null)
     {
         list(
             $grant,
@@ -189,10 +191,17 @@ class Oauth2ClientTest extends \PHPUnit_Framework_TestCase
             ->with('provider')
             ->will($this->returnValue('facebook'));
 
-        $request->expects($this->at(1))
-            ->method('getPost')
-            ->with('provider_authorization_code')
-            ->will($this->returnValue('asdfasdfq3453425'));
+        if ($providerAuthorizationCode) {
+            $request->expects($this->at(1))
+                ->method('getPost')
+                ->with('provider_authorization_code')
+                ->will($this->returnValue($providerAuthorizationCode));
+        } else {
+            $request->expects($this->at(2))
+                ->method('getPost')
+                ->with('provider_access_token')
+                ->will($this->returnValue('456436sdgfgsdfgsdfgsdf'));
+        }
 
         $provider = $this->getMock('Hrevert\OauthClient\Model\ProviderInterface');
 
@@ -208,12 +217,15 @@ class Oauth2ClientTest extends \PHPUnit_Framework_TestCase
             ->with('facebook')
             ->will($this->returnValue($providerClient));
 
-        $providerAccessToken = $this->getMock('League\OAuth2\Client\Token\AccessToken', [], [], '', false);
-
-        $providerClient->expects($this->once())
-            ->method('getAccessToken')
-            ->with('authorization_code', ['code' => 'asdfasdfq3453425'])
-            ->will($this->returnValue($providerAccessToken));
+        if ($providerAuthorizationCode) {
+            $providerAccessToken = $this->getMock('League\OAuth2\Client\Token\AccessToken', [], [], '', false);
+            $providerClient->expects($this->once())
+                ->method('getAccessToken')
+                ->with('authorization_code', ['code' => $providerAuthorizationCode])
+                ->will($this->returnValue($providerAccessToken));
+        } else {
+            $providerAccessToken = new ProviderAccessToken(['access_token' => '456436sdgfgsdfgsdfgsdf']);
+        }
 
         $userDetails = new ProviderUser;
         $userDetails->uid = '23423498sdf1sdf';
