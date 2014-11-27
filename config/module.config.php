@@ -5,6 +5,7 @@ return [
         'grant_manager' => [
             'factories' => [
                 'HtOauth\Server\ClientModule\Grant\Oauth2Client' => 'HtOauth\Server\ClientModule\Factory\Oauth2ClientGrantFactory',
+                'HtOauth\Server\ClientModule\Grant\Oauth1Client' => 'HtOauth\Server\ClientModule\Factory\Oauth1ClientGrantFactory',
             ]
         ]
     ],
