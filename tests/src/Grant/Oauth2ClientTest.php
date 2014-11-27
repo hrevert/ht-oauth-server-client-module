@@ -15,6 +15,9 @@ use League\OAuth2\Client\Token\AccessToken as ProviderAccessToken;
 
 class Oauth2ClientTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @return array
+     */
     protected function createOauth2ClientGrant()
     {
         $accessTokenService = $this->getMockBuilder('ZfrOAuth2\Server\Service\TokenService')
@@ -66,6 +69,7 @@ class Oauth2ClientTest extends \PHPUnit_Framework_TestCase
 
     public function testGetExceptionWhenProviderNameIsEmpty()
     {
+        /** @var Oauth2Client $grant */
         $grant = $this->createOauth2ClientGrant()[0];
 
         $request = $this->getMock('Zend\Http\Request');
@@ -76,6 +80,7 @@ class Oauth2ClientTest extends \PHPUnit_Framework_TestCase
 
     public function testGetExceptionWhenProviderAuthorizationCodeIsEmpty()
     {
+        /** @var Oauth2Client $grant */
         $grant = $this->createOauth2ClientGrant()[0];
 
         $request = $this->getMock('Zend\Http\Request');
@@ -91,6 +96,7 @@ class Oauth2ClientTest extends \PHPUnit_Framework_TestCase
 
     public function testGetExceptionWhenProviderDoesNotExists()
     {
+        /** @var Oauth2Client $grant */
         $grant = $this->createOauth2ClientGrant()[0];
 
         $request = $this->getMock('Zend\Http\Request');
@@ -99,11 +105,6 @@ class Oauth2ClientTest extends \PHPUnit_Framework_TestCase
             ->method('getPost')
             ->with('provider')
             ->will($this->returnValue('facebook'));
-
-        $request->expects($this->at(1))
-            ->method('getPost')
-            ->with('provider_authorization_code')
-            ->will($this->returnValue('asdfasdfq3453425'));
 
         $this->setExpectedException('ZfrOAuth2\Server\Exception\OAuth2Exception');
         $grant->createTokenResponse($request);
@@ -130,7 +131,7 @@ class Oauth2ClientTest extends \PHPUnit_Framework_TestCase
             ->with('provider')
             ->will($this->returnValue('facebook'));
 
-        $request->expects($this->at(1))
+        $request->expects($this->at(2))
             ->method('getPost')
             ->with('provider_authorization_code')
             ->will($this->returnValue('asdfasdfq3453425'));
@@ -142,7 +143,16 @@ class Oauth2ClientTest extends \PHPUnit_Framework_TestCase
             ->with('facebook')
             ->will($this->returnValue($provider));
 
+        $provider->expects($this->once())
+            ->method('getName')
+            ->will($this->returnValue('facebook'));
+
         $providerClient = $this->getMock('League\OAuth2\Client\Provider\ProviderInterface');
+
+        $providerClients->expects($this->once())
+            ->method('has')
+            ->with('facebook')
+            ->will($this->returnValue(true));
 
         $providerClients->expects($this->once())
             ->method('get')
@@ -192,12 +202,12 @@ class Oauth2ClientTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue('facebook'));
 
         if ($providerAuthorizationCode) {
-            $request->expects($this->at(1))
+            $request->expects($this->at(2))
                 ->method('getPost')
                 ->with('provider_authorization_code')
                 ->will($this->returnValue($providerAuthorizationCode));
         } else {
-            $request->expects($this->at(2))
+            $request->expects($this->at(3))
                 ->method('getPost')
                 ->with('provider_access_token')
                 ->will($this->returnValue('456436sdgfgsdfgsdfgsdf'));
@@ -210,7 +220,16 @@ class Oauth2ClientTest extends \PHPUnit_Framework_TestCase
             ->with('facebook')
             ->will($this->returnValue($provider));
 
+        $provider->expects($this->once())
+            ->method('getName')
+            ->will($this->returnValue('facebook'));
+
         $providerClient = $this->getMock('League\OAuth2\Client\Provider\ProviderInterface');
+
+        $providerClients->expects($this->once())
+            ->method('has')
+            ->with('facebook')
+            ->will($this->returnValue(true));
 
         $providerClients->expects($this->once())
             ->method('get')
