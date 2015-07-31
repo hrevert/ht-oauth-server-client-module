@@ -1,9 +1,10 @@
 <?php
+
 namespace HtOauth\Server\ClientModule\Grant;
 
 use Hrevert\OauthClient\Manager\ProviderManagerInterface;
 use Hrevert\OauthClient\Manager\UserProviderManagerInterface;
-use Zend\Http\Request as HttpRequest;
+use Psr\Http\Message\ServerRequestInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use ZfrOAuth2\Server\Entity\AccessToken;
 use ZfrOAuth2\Server\Entity\Client;
@@ -52,15 +53,15 @@ abstract class AbstractOauthClientGrant extends AbstractGrant implements Authori
     protected $objectManager;
 
     /**
-     * Constructor
+     * Constructor.
      *
-     * @param TokenService $accessTokenService
-     * @param TokenService $refreshTokenService
-     * @param ProviderManagerInterface $providerManager
+     * @param TokenService                 $accessTokenService
+     * @param TokenService                 $refreshTokenService
+     * @param ProviderManagerInterface     $providerManager
      * @param UserProviderManagerInterface $userProviderManager
-     * @param ServiceLocatorInterface $providerClients
-     * @param ModuleOptions $options
-     * @param ObjectManager $objectManager
+     * @param ServiceLocatorInterface      $providerClients
+     * @param ModuleOptions                $options
+     * @param ObjectManager                $objectManager
      */
     public function __construct(
         TokenService $accessTokenService,
@@ -70,21 +71,20 @@ abstract class AbstractOauthClientGrant extends AbstractGrant implements Authori
         ServiceLocatorInterface $providerClients,
         ModuleOptions $options,
         ObjectManager $objectManager
-    )
-    {
-        $this->accessTokenService   = $accessTokenService;
-        $this->refreshTokenService  = $refreshTokenService;
-        $this->providerManager      = $providerManager;
-        $this->userProviderManager  = $userProviderManager;
-        $this->providerClients      = $providerClients;
-        $this->options              = $options;
-        $this->objectManager        = $objectManager;
+    ) {
+        $this->accessTokenService = $accessTokenService;
+        $this->refreshTokenService = $refreshTokenService;
+        $this->providerManager = $providerManager;
+        $this->userProviderManager = $userProviderManager;
+        $this->providerClients = $providerClients;
+        $this->options = $options;
+        $this->objectManager = $objectManager;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function createAuthorizationResponse(HttpRequest $request, Client $client, TokenOwnerInterface $owner = null)
+    public function createAuthorizationResponse(ServerRequestInterface $request, Client $client, TokenOwnerInterface $owner = null)
     {
         throw OAuth2Exception::invalidRequest('Oauth2Client grant does not support authorization');
     }
@@ -92,10 +92,11 @@ abstract class AbstractOauthClientGrant extends AbstractGrant implements Authori
     /**
      * {@inheritDoc}
      */
-    public function createTokenResponse(HttpRequest $request, Client $client = null, TokenOwnerInterface $owner = null)
+    public function createTokenResponse(ServerRequestInterface $request, Client $client = null, TokenOwnerInterface $owner = null)
     {
-        $providerName   = $request->getPost('provider');
-        $scope          = $request->getPost('scope');
+        $postParams = $request->getParsedBody();
+        $providerName = isset($postParams['provider']) ? $postParams['provider'] : null;
+        $scope = isset($postParams['scope']) ? $postParams['scope'] : null;
 
         if ($providerName === null) {
             throw OAuth2Exception::invalidRequest('Provider name is missing.');
@@ -121,7 +122,7 @@ abstract class AbstractOauthClientGrant extends AbstractGrant implements Authori
             $userProvider = $createUserCallable($providerUser);
             if ($userProvider instanceof UserInterface) {
                 $user = $userProvider;
-                $userProvider = new UserProvider;
+                $userProvider = new UserProvider();
                 $userProvider->setUser($user);
             }
 
@@ -165,9 +166,10 @@ abstract class AbstractOauthClientGrant extends AbstractGrant implements Authori
     }
 
     /**
-     * @param HttpRequest $request
-     * @param ProviderInterface $provider
+     * @param ServerRequestInterface $request
+     * @param ProviderInterface      $provider
+     *
      * @return ProviderUser
      */
-    abstract protected function findProviderUserFromRequest(HttpRequest $request, ProviderInterface $provider);
+    abstract protected function findProviderUserFromRequest(ServerRequestInterface $request, ProviderInterface $provider);
 }

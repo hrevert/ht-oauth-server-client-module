@@ -1,5 +1,6 @@
 <?php
-namespace HtOauth\Server\ClientModule\Factory;
+
+namespace HtOauth\Server\ClientModuleTest\Factory;
 
 use HtOauth\Server\ClientModule\Factory\Oauth2ClientGrantFactory;
 
@@ -66,13 +67,12 @@ class Oauth2ClientGrantFactoryTest extends \PHPUnit_Framework_TestCase
             ->with('ht_oauth_client_doctrine_em')
             ->will($this->returnValue($objectManager));
 
-
         $grants = $this->getMock('Zend\ServiceManager\AbstractPluginManager');
         $grants->expects($this->once())
             ->method('getServiceLocator')
             ->will($this->returnValue($serviceLocator));
 
-        $factory = new Oauth2ClientGrantFactory;
+        $factory = new Oauth2ClientGrantFactory();
         $this->assertInstanceOf('HtOauth\Server\ClientModule\Grant\Oauth2Client', $factory->createService($grants));
-    }    
+    }
 }

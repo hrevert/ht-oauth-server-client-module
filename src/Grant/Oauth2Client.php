@@ -1,7 +1,8 @@
 <?php
+
 namespace HtOauth\Server\ClientModule\Grant;
 
-use Zend\Http\Request as HttpRequest;
+use Psr\Http\Message\ServerRequestInterface;
 use ZfrOAuth2\Server\Exception\OAuth2Exception;
 use League\OAuth2\Client\Exception\IDPException;
 use HtLeagueOauthClientModule\Model\Oauth2User;
@@ -9,19 +10,20 @@ use League\OAuth2\Client\Token\AccessToken as ProviderAccessToken;
 use Hrevert\OauthClient\Model\ProviderInterface;
 
 class Oauth2Client extends AbstractOauthClientGrant
-{    
-    const GRANT_TYPE          = 'oauth2_client';
+{
+    const GRANT_TYPE = 'oauth2_client';
     const GRANT_RESPONSE_TYPE = null;
 
     /**
      * {@inheritdoc}
      */
-    protected function findProviderUserFromRequest(HttpRequest $request, ProviderInterface $provider)
+    protected function findProviderUserFromRequest(ServerRequestInterface $request, ProviderInterface $provider)
     {
-        $providerAuthorizationCode  = $request->getPost('provider_authorization_code');
-        $providerAccessToken        = $request->getPost('provider_access_token');
+        $postParams = $request->getParsedBody();
+        $providerAuthorizationCode = isset($postParams['provider_authorization_code']) ? $postParams['provider_authorization_code'] : null;
+        $providerAccessToken = isset($postParams['provider_access_token']) ? $postParams['provider_access_token'] : null;
 
-        /** @var \League\OAuth2\Client\Provider\ProviderInterface */
+        /* @var \League\OAuth2\Client\Provider\ProviderInterface */
         $providerClient = $this->providerClients->get($provider->getName());
 
         if ($providerAuthorizationCode) {
@@ -37,7 +39,7 @@ class Oauth2Client extends AbstractOauthClientGrant
             $providerAccessToken = new ProviderAccessToken(['access_token' => $providerAccessToken]);
         }
 
-        /** @var \League\OAuth2\Client\Entity\User */
+        /* @var \League\OAuth2\Client\Entity\User */
         $userDetails = $providerClient->getUserDetails($providerAccessToken);
 
         return new Oauth2User($userDetails);

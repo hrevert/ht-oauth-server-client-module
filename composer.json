@@ -14,10 +14,11 @@
         "hrevert/ht-oauth-client-module": "0.0.*",
         "hrevert/ht-league-oauth-client-module": "0.2.*",
         "zendframework/zend-stdlib": "~2.2",
-        "zfr/zfr-oauth2-server-module": "0.5.*"
+        "zfr/zfr-oauth2-server-module": "dev-master"
     },
     "require-dev": {
         "phpunit/phpunit": "4.*",
+        "zendframework/zend-diactoros": "~1.1",
         "zendframework/zend-mvc": "~2.2",
         "zendframework/zend-servicemanager": "~2.2",
         "zendframework/zend-modulemanager": "~2.2",
@@ -30,5 +31,6 @@
         "classmap": [
             "./Module.php"
         ]
-    }
+    },
+    "minimum-stability": "dev"
 }

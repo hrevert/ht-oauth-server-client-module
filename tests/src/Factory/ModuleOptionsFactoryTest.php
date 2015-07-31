@@ -1,5 +1,6 @@
 <?php
-namespace HtOauth\Server\ClientModule\Factory;
+
+namespace HtOauth\Server\ClientModuleTest\Factory;
 
 use HtOauth\Server\ClientModule\Factory\ModuleOptionsFactory;
 
@@ -13,7 +14,7 @@ class ModuleOptionsFactoryTest extends \PHPUnit_Framework_TestCase
             ->with('Config')
             ->will($this->returnValue(['ht_oauth_service_client' => []]));
 
-        $factory = new ModuleOptionsFactory;
+        $factory = new ModuleOptionsFactory();
         $this->assertInstanceOf('HtOauth\Server\ClientModule\Options\ModuleOptions', $factory->createService($serviceLocator));
     }
 }

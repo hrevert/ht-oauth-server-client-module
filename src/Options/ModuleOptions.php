@@ -1,4 +1,5 @@
 <?php
+
 namespace HtOauth\Server\ClientModule\Options;
 
 use Zend\Stdlib\AbstractOptions;
@@ -12,7 +13,7 @@ class ModuleOptions extends AbstractOptions
     protected $createUserCallable;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param array $options
      */
@@ -27,9 +28,10 @@ class ModuleOptions extends AbstractOptions
     }
 
     /**
-     * Sets createUserCallable
+     * Sets createUserCallable.
      *
      * @param callable $createUserCallable
+     *
      * @return self
      */
     public function setCreateUserCallable(callable $createUserCallable)
@@ -40,7 +42,7 @@ class ModuleOptions extends AbstractOptions
     }
 
     /**
-     * Gets createUserCallable
+     * Gets createUserCallable.
      *
      * @return callable
      */

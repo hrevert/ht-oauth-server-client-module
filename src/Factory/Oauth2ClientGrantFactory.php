@@ -1,4 +1,5 @@
 <?php
+
 namespace HtOauth\Server\ClientModule\Factory;
 
 class Oauth2ClientGrantFactory extends AbstractOauthClientGrantFactory

@@ -1,4 +1,5 @@
 <?php
+
 namespace HtOauth\Server\ClientModuleTest\Grant;
 
 use HtOauth\Server\ClientModule\Grant\Oauth2Client;
@@ -53,7 +54,7 @@ class Oauth2ClientTest extends \PHPUnit_Framework_TestCase
         );
 
         $grant->setAuthorizationServer($authorizationServer);
-        
+
         return [
             $grant,
             $accessTokenService,
@@ -63,8 +64,8 @@ class Oauth2ClientTest extends \PHPUnit_Framework_TestCase
             $providerClients,
             $authorizationServer,
             $options,
-            $objectManager
-        ];      
+            $objectManager,
+        ];
     }
 
     public function testGetExceptionWhenProviderNameIsEmpty()
@@ -72,7 +73,7 @@ class Oauth2ClientTest extends \PHPUnit_Framework_TestCase
         /** @var Oauth2Client $grant */
         $grant = $this->createOauth2ClientGrant()[0];
 
-        $request = $this->getMock('Zend\Http\Request');
+        $request = $this->getMock('Psr\Http\Message\ServerRequestInterface');
 
         $this->setExpectedException('ZfrOAuth2\Server\Exception\OAuth2Exception');
         $grant->createTokenResponse($request);
@@ -83,12 +84,11 @@ class Oauth2ClientTest extends \PHPUnit_Framework_TestCase
         /** @var Oauth2Client $grant */
         $grant = $this->createOauth2ClientGrant()[0];
 
-        $request = $this->getMock('Zend\Http\Request');
+        $request = $this->getMock('Psr\Http\Message\ServerRequestInterface');
 
         $request->expects($this->at(0))
-            ->method('getPost')
-            ->with('provider')
-            ->will($this->returnValue('facebook'));
+            ->method('getParsedBody')
+            ->will($this->returnValue(['provider' => 'facebook']));
 
         $this->setExpectedException('ZfrOAuth2\Server\Exception\OAuth2Exception');
         $grant->createTokenResponse($request);
@@ -99,12 +99,11 @@ class Oauth2ClientTest extends \PHPUnit_Framework_TestCase
         /** @var Oauth2Client $grant */
         $grant = $this->createOauth2ClientGrant()[0];
 
-        $request = $this->getMock('Zend\Http\Request');
+        $request = $this->getMock('Psr\Http\Message\ServerRequestInterface');
 
         $request->expects($this->at(0))
-            ->method('getPost')
-            ->with('provider')
-            ->will($this->returnValue('facebook'));
+            ->method('getParsedBody')
+            ->will($this->returnValue(['provider' => 'facebook']));
 
         $this->setExpectedException('ZfrOAuth2\Server\Exception\OAuth2Exception');
         $grant->createTokenResponse($request);
@@ -124,17 +123,11 @@ class Oauth2ClientTest extends \PHPUnit_Framework_TestCase
             $objectManager
         ) = $this->createOauth2ClientGrant();
 
-        $request = $this->getMock('Zend\Http\Request');
+        $request = $this->getMock('Psr\Http\Message\ServerRequestInterface');
 
-        $request->expects($this->at(0))
-            ->method('getPost')
-            ->with('provider')
-            ->will($this->returnValue('facebook'));
-
-        $request->expects($this->at(2))
-            ->method('getPost')
-            ->with('provider_authorization_code')
-            ->will($this->returnValue('asdfasdfq3453425'));
+        $request->expects($this->exactly(2))
+            ->method('getParsedBody')
+            ->will($this->returnValue(['provider' => 'facebook', 'provider_authorization_code' => 'asdfasdfq3453425']));
 
         $provider = $this->getMock('Hrevert\OauthClient\Model\ProviderInterface');
 
@@ -173,7 +166,7 @@ class Oauth2ClientTest extends \PHPUnit_Framework_TestCase
         return [
             [true, null, null],
             [false, $this->getMock('Hrevert\OauthClient\Model\UserProviderInterface'), 'ytdfgadsfasdfasdf'],
-            [false, $this->getMock('Hrevert\OauthClient\Model\UserProviderInterface')]
+            [false, $this->getMock('Hrevert\OauthClient\Model\UserProviderInterface')],
         ];
     }
 
@@ -194,23 +187,16 @@ class Oauth2ClientTest extends \PHPUnit_Framework_TestCase
             $objectManager
         ) = $this->createOauth2ClientGrant();
 
-        $request = $this->getMock('Zend\Http\Request');
-
-        $request->expects($this->at(0))
-            ->method('getPost')
-            ->with('provider')
-            ->will($this->returnValue('facebook'));
+        $request = $this->getMock('Psr\Http\Message\ServerRequestInterface');
 
         if ($providerAuthorizationCode) {
-            $request->expects($this->at(2))
-                ->method('getPost')
-                ->with('provider_authorization_code')
-                ->will($this->returnValue($providerAuthorizationCode));
+            $request->expects($this->exactly(2))
+                ->method('getParsedBody')
+                ->will($this->returnValue(['provider' => 'facebook', 'provider_authorization_code' => $providerAuthorizationCode]));
         } else {
-            $request->expects($this->at(3))
-                ->method('getPost')
-                ->with('provider_access_token')
-                ->will($this->returnValue('456436sdgfgsdfgsdfgsdf'));
+            $request->expects($this->exactly(2))
+                ->method('getParsedBody')
+                ->will($this->returnValue(['provider' => 'facebook', 'provider_access_token' => '456436sdgfgsdfgsdfgsdf']));
         }
 
         $provider = $this->getMock('Hrevert\OauthClient\Model\ProviderInterface');
@@ -246,7 +232,7 @@ class Oauth2ClientTest extends \PHPUnit_Framework_TestCase
             $providerAccessToken = new ProviderAccessToken(['access_token' => '456436sdgfgsdfgsdfgsdf']);
         }
 
-        $userDetails = new ProviderUser;
+        $userDetails = new ProviderUser();
         $userDetails->uid = '23423498sdf1sdf';
 
         $providerClient->expects($this->once())
@@ -261,8 +247,9 @@ class Oauth2ClientTest extends \PHPUnit_Framework_TestCase
 
         if (!$userProvider) {
             $userProvider = $this->getMock('Hrevert\OauthClient\Model\UserProviderInterface');
-            $createUserCallable = function($oauth2User) use ($userProvider) {
+            $createUserCallable = function ($oauth2User) use ($userProvider) {
                 $this->assertInstanceOf('HtLeagueOauthClientModule\Model\Oauth2User', $oauth2User);
+
                 return $userProvider;
             };
             $options->expects($this->once())
@@ -307,11 +294,9 @@ class Oauth2ClientTest extends \PHPUnit_Framework_TestCase
 
         $response = $grant->createTokenResponse($request, new Client());
 
-        $body = json_decode($response->getContent(), true);
+        $body = json_decode($response->getBody(), true);
 
-        $this->assertSame($accessToken, $response->getMetadata('accessToken'));
-
-        $this->assertEquals('azerty_access', $body['access_token']);
+        $this->assertEquals($accessToken->getToken(), $body['access_token']);
         $this->assertEquals('Bearer', $body['token_type']);
         $this->assertEquals(3600, $body['expires_in']);
         $this->assertEquals('read', $body['scope']);
@@ -319,7 +304,7 @@ class Oauth2ClientTest extends \PHPUnit_Framework_TestCase
 
         if ($hasRefreshGrant) {
             $this->assertEquals('azerty_refresh', $body['refresh_token']);
-        }            
+        }
     }
 
     /**
@@ -330,7 +315,7 @@ class Oauth2ClientTest extends \PHPUnit_Framework_TestCase
         $refreshToken = new RefreshToken();
         $refreshToken->setToken('azerty_refresh');
         $refreshToken->setScopes('read');
-        $validDate    = new DateTime();
+        $validDate = new DateTime();
         $validDate->add(DateInterval::createFromDateString('3600 seconds'));
 
         $refreshToken->setExpiresAt($validDate);
@@ -346,7 +331,7 @@ class Oauth2ClientTest extends \PHPUnit_Framework_TestCase
         $accessToken = new AccessToken();
         $accessToken->setToken('azerty_access');
         $accessToken->setScopes('read');
-        $validDate   = new DateTime();
+        $validDate = new DateTime();
         $validDate->add(new DateInterval('PT1H'));
 
         $accessToken->setExpiresAt($validDate);

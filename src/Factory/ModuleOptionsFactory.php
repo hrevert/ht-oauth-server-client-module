@@ -1,4 +1,5 @@
 <?php
+
 namespace HtOauth\Server\ClientModule\Factory;
 
 use Zend\ServiceManager\ServiceLocatorInterface;
