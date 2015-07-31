@@ -11,7 +11,7 @@ use Hrevert\OauthClient\Model\ProviderInterface;
 
 class Oauth2Client extends AbstractOauthClientGrant
 {
-    const GRANT_TYPE = 'oauth2_client';
+    const GRANT_TYPE          = 'oauth2_client';
     const GRANT_RESPONSE_TYPE = null;
 
     /**
@@ -19,9 +19,9 @@ class Oauth2Client extends AbstractOauthClientGrant
      */
     protected function findProviderUserFromRequest(ServerRequestInterface $request, ProviderInterface $provider)
     {
-        $postParams = $request->getParsedBody();
+        $postParams                = $request->getParsedBody();
         $providerAuthorizationCode = isset($postParams['provider_authorization_code']) ? $postParams['provider_authorization_code'] : null;
-        $providerAccessToken = isset($postParams['provider_access_token']) ? $postParams['provider_access_token'] : null;
+        $providerAccessToken       = isset($postParams['provider_access_token']) ? $postParams['provider_access_token'] : null;
 
         /* @var \League\OAuth2\Client\Provider\ProviderInterface */
         $providerClient = $this->providerClients->get($provider->getName());

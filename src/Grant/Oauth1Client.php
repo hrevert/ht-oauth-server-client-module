@@ -10,7 +10,7 @@ use HtLeagueOauthClientModule\Model\Oauth1User;
 
 class Oauth1Client extends AbstractOauthClientGrant
 {
-    const GRANT_TYPE = 'oauth1_client';
+    const GRANT_TYPE          = 'oauth1_client';
     const GRANT_RESPONSE_TYPE = null;
 
     /**
@@ -18,9 +18,9 @@ class Oauth1Client extends AbstractOauthClientGrant
      */
     protected function findProviderUserFromRequest(ServerRequestInterface $request, ProviderInterface $provider)
     {
-        $postParams = $request->getParsedBody();
+        $postParams      = $request->getParsedBody();
         $tokenIdentifier = isset($postParams['token_identifier']) ? $postParams['token_identifier'] : null;
-        $tokenSecret = isset($postParams['token_secret']) ? $postParams['token_secret'] : null;
+        $tokenSecret     = isset($postParams['token_secret']) ? $postParams['token_secret'] : null;
 
         $tokenCredentials = new TokenCredentials();
         $tokenCredentials->setIdentifier($tokenIdentifier);

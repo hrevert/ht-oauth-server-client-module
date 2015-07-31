@@ -72,13 +72,13 @@ abstract class AbstractOauthClientGrant extends AbstractGrant implements Authori
         ModuleOptions $options,
         ObjectManager $objectManager
     ) {
-        $this->accessTokenService = $accessTokenService;
-        $this->refreshTokenService = $refreshTokenService;
-        $this->providerManager = $providerManager;
-        $this->userProviderManager = $userProviderManager;
-        $this->providerClients = $providerClients;
-        $this->options = $options;
-        $this->objectManager = $objectManager;
+        $this->accessTokenService   = $accessTokenService;
+        $this->refreshTokenService  = $refreshTokenService;
+        $this->providerManager      = $providerManager;
+        $this->userProviderManager  = $userProviderManager;
+        $this->providerClients      = $providerClients;
+        $this->options              = $options;
+        $this->objectManager        = $objectManager;
     }
 
     /**
@@ -94,9 +94,9 @@ abstract class AbstractOauthClientGrant extends AbstractGrant implements Authori
      */
     public function createTokenResponse(ServerRequestInterface $request, Client $client = null, TokenOwnerInterface $owner = null)
     {
-        $postParams = $request->getParsedBody();
+        $postParams   = $request->getParsedBody();
         $providerName = isset($postParams['provider']) ? $postParams['provider'] : null;
-        $scope = isset($postParams['scope']) ? $postParams['scope'] : null;
+        $scope        = isset($postParams['scope']) ? $postParams['scope'] : null;
 
         if ($providerName === null) {
             throw OAuth2Exception::invalidRequest('Provider name is missing.');
