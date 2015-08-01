@@ -12,7 +12,7 @@
     "require": {
         "php": ">=5.5",
         "hrevert/ht-oauth-client-module": "0.0.*",
-        "hrevert/ht-league-oauth-client-module": "0.2.*",
+        "hrevert/ht-league-oauth-client-module": "0.3.*",
         "zendframework/zend-stdlib": "~2.2",
         "zfr/zfr-oauth2-server-module": "dev-master"
     },
